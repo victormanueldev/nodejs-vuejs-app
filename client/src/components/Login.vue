@@ -1,9 +1,10 @@
 <template>
   <div class="background-login">
-    <v-container fluid>
+    <v-container fluid class="py-5">
       <v-layout row justify-center align-center fill-height class="mt-5">
         <v-flex xs12 sm4 >
           <v-card :raised="true" :hover="true" >
+            <v-progress-linear :indeterminate="true" :color="'cyan darken-1'" :active="loader"></v-progress-linear>
             <v-avatar
               :tile="false"
               :size="80"
@@ -16,7 +17,7 @@
                 <p class="mt-2 mb-0">Submit your credentials</p></div>
             </v-card-title>
             <v-slide-x-transition appear>
-              <v-card-text  v-show="true">
+              <v-card-text >
                 <v-form v-model="valid">
                   <v-flex xs12 sm12 md12>
                       <v-text-field
@@ -26,16 +27,17 @@
                         :color="'cyan darken-1'"
                         type="text"
                         append-icon="email"
-                        :rules="emailRules"
+                        :rules="[emailRules.validation1, emailRules.validation2]"
                         required
+                        @update="error(false)"
                       ></v-text-field>
                   </v-flex>
                   <v-layout row justify-center align-center>
                     <v-flex md6 sm12 xs12 align-right>
-                      <v-btn class="ml-0 " to="/register" flat right color="cyan darken-1">Create Account</v-btn>
+                      <v-btn class="ml-0 "  to="/register" flat right color="cyan darken-1">Create Account</v-btn>
                     </v-flex>
                     <v-flex md6 xs12 sm12 >
-                      <v-btn  @click="register" left color="cyan darken-1" :disabled="!valid" :dark="true" class="left-align">Next<v-icon right dark>arrow_forward</v-icon></v-btn>
+                      <v-btn  @click="searchEmail" left color="cyan darken-1" :disabled="!valid" :dark="false" class="right-align white--text">Next<v-icon right dark>arrow_forward</v-icon></v-btn>
                     </v-flex>
                   </v-layout>
                 </v-form>
@@ -53,6 +55,20 @@
           </v-flex>
     </v-layout>
   </v-container>
+      <v-snackbar
+      v-model="snackbar"
+      :bottom="true"
+      :timeout="6000"
+    >
+      {{ errorResponse }}
+      <v-btn
+        color="cyan"
+        flat
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -61,33 +77,34 @@ import AuthService from '@/services/AuthService'
 export default {
   data () {
     return {
+      err: false,
       email: '',
-      emailRules: [
-        v => !!v || 'E-mail is required',
-        v => /.+@.+/.test(v) || 'E-mail must be valid'
-      ],
-      password: '',
-      passwordRules: [
-        v => !!v || 'Password is required',
-        v => v.length >= 8 || 'Password must be minimum 8 characters'
-      ],
-      show: true,
+      emailRules: {
+        validation1: v => !!v || 'E-mail is required',
+        validation2: v => /.+@.+/.test(v) || 'E-mail must be valid'
+      },
       show1: false,
-      valid: true
+      valid: true,
+      loader: false,
+      snackbar: false,
+      errorResponse: ''
     }
   },
-  created () {
-    setTimeout(() => { window.location.href = '/#/password' }, 1000)
-  },
+  created () {},
   methods: {
-    async register () {
+    async searchEmail () {
+      this.loader = true
       try {
-        await AuthService.register({
-          email: this.email,
-          password: this.password
+        const res = await AuthService.findEmail({
+          email: this.email
         })
+        console.log(res)
+        this.$router.push({name: 'password', params: {email: res.data.email}})
       } catch (error) {
-        console.log(error)
+        this.loader = false
+        this.errorResponse = error.response.data.error
+        this.snackbar = true
+        this.email = ''
       }
     }
   }
@@ -119,7 +136,7 @@ a {
 .title-align {
   justify-content: center;
 }
-.left-align {
+.right-align {
   left: 21%;
 }
 </style>

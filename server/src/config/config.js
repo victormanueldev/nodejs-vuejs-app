@@ -3,7 +3,7 @@ module.exports = {
     db: {
         database: process.env.DB_NAME || 'nodejs_db', 
         user: process.env.DB_USER || 'root',
-        pass: process.env.DB_PASS || 'practy',
+        pass: process.env.DB_PASS || 'saxo',
         options: {
             dialect: process.env.DIALECT || 'mysql', 
             host: process.env.HOST || 'localhost'

@@ -4,4 +4,8 @@ module.exports = (app) => {
     app.post("/register", 
         AuthControllerPolicy.register,
         AuthController.register)
+    
+    app.post("/findEmail",
+        AuthController.findEmail
+    )
 } 

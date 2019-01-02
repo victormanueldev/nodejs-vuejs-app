@@ -8,6 +8,10 @@ export default {
  */
   register (credentials) {
     return Api().post('/register', credentials)
+  },
+
+  findEmail (email) {
+    return Api().post('/findEmail', email)
   }
 
 }

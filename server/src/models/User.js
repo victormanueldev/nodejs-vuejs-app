@@ -9,5 +9,7 @@ module.exports = (sequelize, DataTypes) =>
             type: DataTypes.STRING,
             unique: true
         },
+        name: DataTypes.STRING,
+        last_name: DataTypes.STRING,
         password: DataTypes.STRING
     })
