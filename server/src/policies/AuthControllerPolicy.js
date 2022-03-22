@@ -6,11 +6,14 @@ module.exports = {
             email: Joi.string().email(),
             password: Joi.string().regex(
                 new RegExp('^[a-zA-Z0-9]{8,32}$')
-            )
+            ),
+            name: Joi.string(),
+            last_name: Joi.string()
         }
 
         const {error, value} = Joi.validate(req.body, schema)
         if(error){
+            console.log(error)
             switch (error.details[0].context.key) {
                 case 'email':
                    res.status(400).send({
@@ -19,7 +22,7 @@ module.exports = {
                    }) 
                     break
                 case 'password':
-                   res.status(401).send({
+                   res.status(400).send({
                        key: 'password',
                        error: `The password provided failed to match the follwoing rules: 
                             <br>
@@ -32,7 +35,7 @@ module.exports = {
             
                 default:
                    res.status(400).send({
-                       error: 'Please enter a valid information'
+                       error: error
                    })
                     break
             }

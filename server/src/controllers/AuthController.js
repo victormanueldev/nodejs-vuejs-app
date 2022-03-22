@@ -26,5 +26,22 @@ module.exports = {
         }else{
             res.send(user)
         }
+    },
+
+    async login(req, res) {
+        const user = await User.findOne({
+            attributes: ['name', 'last_name', 'email'],
+            where: {
+                email: req.body.email,
+                password: req.body.password
+            }
+        })
+        if(!user){
+            res.status(401).send({
+                error: 'This email is not exists, please create an account.'
+            })
+        }else{
+            res.send(user)
+        }
     }
 }

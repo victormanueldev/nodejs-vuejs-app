@@ -8,4 +8,8 @@ module.exports = (app) => {
     app.post("/findEmail",
         AuthController.findEmail
     )
+
+    app.post("/login",
+    AuthController.login
+)
 } 

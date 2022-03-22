@@ -12,6 +12,10 @@ export default {
 
   findEmail (email) {
     return Api().post('/findEmail', email)
+  },
+
+  login (credentials) {
+    return Api().post('/login', credentials)
   }
 
 }

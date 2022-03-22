@@ -4,6 +4,7 @@
       <v-layout row justify-center align-center fill-height class="mt-5">
         <v-flex xs12 sm4 >
           <v-card :raised="true" :hover="true" >
+            <v-progress-linear :indeterminate="true" :color="'cyan darken-1'" :active="loader"></v-progress-linear>
             <v-avatar
               :tile="false"
               :size="80"
@@ -36,7 +37,7 @@
                       <v-btn  class="ml-0 left-align" to="/" flat right color="cyan darken-1" :dark="false"><v-icon left light>arrow_back</v-icon>Back</v-btn>
                     <v-flex md6 xs12 sm12 >
                     </v-flex>
-                      <v-btn class="white--text" @click="register" center color="cyan darken-1" :disabled="!valid" :dark="false">Start Session<v-icon right dark>account_circle</v-icon></v-btn>
+                      <v-btn class="white--text" @click="login" center color="cyan darken-1" :disabled="!valid" :dark="false">Start Session<v-icon right dark>account_circle</v-icon></v-btn>
                   </v-layout>
                 </v-form>
               </v-card-text>
@@ -53,6 +54,20 @@
           </v-flex>
     </v-layout>
   </v-container>
+  <v-snackbar
+    v-model="snackbar"
+    :bottom="true"
+    :timeout="6000"
+  >
+    {{ errorResponse }}
+    <v-btn
+      color="cyan"
+      flat
+      @click="snackbar = false"
+    >
+      Close
+    </v-btn>
+  </v-snackbar>
   </div>
 </template>
 
@@ -67,21 +82,30 @@ export default {
         v => v.length >= 8 || 'Password must be minimum 8 characters'
       ],
       show1: false,
-      valid: true
+      valid: true,
+      errorResponse: '',
+      loader: false
     }
   },
   created () {
     console.log(this.$route.params)
   },
   methods: {
-    async register () {
+    async login () {
+      this.loader = true
       try {
-        await AuthService.register({
-          email: this.email,
+        const response = await AuthService.login({
+          email: this.$route.params.email,
           password: this.password
         })
+        this.loader = false
+        this.errorResponse = `Bienvenido ${response.data.name} ${response.data.last_name}!`
+        this.snackbar = true
       } catch (error) {
-        console.log(error)
+        this.loader = false
+        this.errorResponse = error.response.data.error
+        this.snackbar = true
+        this.password = ''
       }
     }
   }

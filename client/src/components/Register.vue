@@ -52,6 +52,7 @@
                             outline
                             :color="'cyan darken-1'"
                             :type="show1 ? 'text' : 'password'"
+                            :rules="emailRules"
                             required
                           ></v-text-field>
                         </v-flex>
@@ -75,7 +76,7 @@
                           <v-btn class="ml-0 align-left"  to="/" flat left color="cyan darken-1" >Redirect to log in</v-btn>
                         </v-flex>
                         <v-flex md6 xs12 sm6>
-                          <v-btn class="ml-0 align-right white--text"  to="/" right color="cyan darken-1" >Create Account<v-icon right dark>person_add</v-icon></v-btn>
+                          <v-btn class="ml-0 align-right white--text" @click="register()" right color="cyan darken-1" >Create Account<v-icon right dark>person_add</v-icon></v-btn>
                         </v-flex>
                       </v-layout>
                     </v-form>
@@ -138,18 +139,21 @@ export default {
       try {
         await AuthService.register({
           email: this.email,
-          password: this.password
+          password: this.password,
+          name: this.name,
+          last_name: this.lastName
         })
+        this.$router.push({ name: 'Login' })
       } catch (error) {
         if (error.response.data.key === 'email') {
-          this.errosInput.email.colorError = 'red'
-          this.errosInput.email.errorEmail = false
-          this.errosInput.email.message = error.response.data.error
+          // this.errosInput.email.colorError = 'red'
+          // this.errosInput.email.errorEmail = false
+          // this.errosInput.email.message = error.response.data.error
           document.getElementById('email').focus()
         } else {
-          this.errosInput.password.colorError = 'red'
-          this.errosInput.password.errorEmail = false
-          this.errosInput.password.message = error.response.data.error
+          // this.errosInput.password.colorError = 'red'
+          // this.errosInput.password.errorEmail = false
+          // this.errosInput.password.message = error.response.data.error
         }
         this.error = error.response.data.error
       }
