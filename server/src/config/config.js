@@ -6,7 +6,7 @@ module.exports = {
         pass: process.env.DB_PASS || 'postgres',
         options: {
             dialect: process.env.DIALECT || 'postgres',
-            host: process.env.HOST || '172.17.0.1',
+            host: process.env.HOST || '172.19.0.3',
             port: '5432'
         }
     }
